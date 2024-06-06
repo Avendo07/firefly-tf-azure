@@ -23,17 +23,17 @@ resource "azurerm_key_vault_secret" "app_key" {
 }
 
 data "local_sensitive_file" "db_user"{
-  filename = "secrets/.db_user"
+  filename = "../secrets/.db_user"
 }
 
 data "local_sensitive_file" "db_secret"{
-  filename = "secrets/.db_secret"
+  filename = "../secrets/.db_secret"
 }
 
 data "local_sensitive_file" "app_secret"{
-  filename = "secrets/.app_secret"
+  filename = "../secrets/.app_secret"
 }
 
 data "local_sensitive_file" "app_key"{
-  filename = "secrets/.app_key"
+  filename = "../secrets/.app_key"
 }
