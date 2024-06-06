@@ -32,3 +32,23 @@ resource "azurerm_subnet" "db_subnet" {
     }
   }*/
 }
+
+resource "azurerm_private_dns_zone" "dns" {
+  name                = "privatelink.mysql.database.azure.com"
+  resource_group_name = local.rg_name
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "dns_vnet_link" {
+  name                = "dns_vnet_link"
+  resource_group_name = local.rg_name
+  private_dns_zone_name = azurerm_private_dns_zone.dns.name
+  virtual_network_id = azurerm_virtual_network.vnet.id
+}
+
+resource "azurerm_private_dns_a_record" "dns_record" {
+  name                = "mysql-db"
+  records             = [azurerm_private_endpoint.pep.private_service_connection[0].private_ip_address]
+  resource_group_name = local.rg_name
+  ttl                 = 300
+  zone_name           = azurerm_private_dns_zone.dns.name
+}

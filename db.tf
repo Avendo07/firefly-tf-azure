@@ -15,7 +15,20 @@ resource "azurerm_mysql_flexible_database" "mysql_db" {
   server_name         = azurerm_mysql_flexible_server.db_server.name
   charset             = "utf8"
   collation           = "utf8_unicode_ci"
+}
 
+resource "azurerm_mysql_flexible_server_configuration" "secure_connection" {
+  name                = "require_secure_transport"
+  resource_group_name = local.rg_name
+  server_name         = azurerm_mysql_flexible_server.db_server.name
+  value               = "OFF"
+}
+
+resource "azurerm_mysql_flexible_server_configuration" "connections" {
+  name                = "max_user_connections"
+  resource_group_name = local.rg_name
+  server_name         = azurerm_mysql_flexible_server.db_server.name
+  value               = "2"
 }
 
 resource "azurerm_private_endpoint" "pep" {

@@ -18,27 +18,21 @@ resource "azurerm_linux_web_app" "web_app" {
     always_on = false
     application_stack {
       docker_image_name = var.docker-image
-#       docker_registry_url = "https://hub.docker.com"
     }
   }
   app_settings = {
-    "APP_KEY" = "NW9FYPe2NKav99Jg5TkfsIulvj6X4UOe"
-    "DB_DATABASE" = "fireflyiii-db"
-#     "DB_HOST" = azurerm_private_endpoint.pep.custom_dns_configs[0].fqdn
+    "APP_KEY" = data.local_sensitive_file.app_key.content
+    "APP_PASSWORD" = data.local_sensitive_file.app_secret.content
+    "DB_DATABASE" = azurerm_mysql_flexible_database.mysql_db.name
+    "DB_CONNECTION"="mysql"
+    "DB_HOST" = "${azurerm_private_dns_a_record.dns_record.name}.${azurerm_private_dns_zone.dns.name}"#"mysql-db.privatelink.mysql.database.azure.com"
     "DB_USERNAME" = data.local_sensitive_file.db_user.content
     "DB_PASSWORD" = data.local_sensitive_file.db_secret.content
-    "APP_PASSWORD" = data.local_sensitive_file.app_secret.content
     "DEFAULT_LANGUAGE" = "en_US"
     "DEFAULT_LOCALE" = "equal"
     "TRUSTED_PROXIES" = "**"
     "TZ" = "Asia/Kolkata"
   }
-
-/*  connection_string {
-    name  = "DB_CONNECTION"
-    type  = "MySQL"
-    value = "Server=${azurerm_private_endpoint.pep.ip_configuration};Database=your-database-name;User Id=mysqladminun@${azurerm_mysql_flexible_server.example.name};Password=your-password;SslMode=Required;"
-  }*/
 
   tags = local.tags
 }
